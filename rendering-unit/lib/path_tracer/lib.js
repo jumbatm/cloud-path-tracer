@@ -41,15 +41,38 @@ var lib = ffi.Library('path_tracer/target/debug/libpath_tracer_ffi', {
  *  Check if Pixel_ptr above is set up correctly, or should not exist due to underneath's code.
  */
 
-let scene = lib.PT_Scene_from_json(ref.allocCString('Dummy parameter'));
-let camera = lib.PT_Camera_new(
-  scene,
-  lib.PT_Vec3_new(0.0, 0.0, 0.0),
-  lib.PT_Vec3_new(0.0, 1.0, 0.0),
-  lib.PT_Vec3_new(1.0, 0.0, 0.0),
-  800,
-  600
-);
+/**
+ * The following is the test code - commented out for now
+ */
+// let scene = lib.PT_Scene_from_json(ref.allocCString('Dummy parameter'));
+// let camera = lib.PT_Camera_new(
+//   scene,
+//   lib.PT_Vec3_new(0.0, 0.0, 0.0),
+//   lib.PT_Vec3_new(0.0, 1.0, 0.0),
+//   lib.PT_Vec3_new(1.0, 0.0, 0.0),
+//   800,
+//   600
+// );
 
-let image = lib.PT_Camera_render(camera, 0, 0, 0, 0, 90.0, 1, 1);
-console.log(`Result image is ${lib.PT_Image_get_width(image)}x${lib.PT_Image_get_height(image)})`);
+// let image = lib.PT_Camera_render(camera, 0, 0, 0, 0, 90.0, 1, 1);
+// console.log(`Result image is ${lib.PT_Image_get_width(image)}x${lib.PT_Image_get_height(image)})`);
+
+module.exports = {
+  Vec3: {
+    new: lib.PT_Vec3_new
+  },
+  Scene: {
+    fromJson: lib.PT_Scene_from_json
+  },
+  Camera: {
+    new: PT_Camera_new,
+    render: PT_Camera_render
+  },
+  Image: {
+    delete: PT_Image_delete,
+    getPixel: PT_Image_get_pixel,
+    getHeight: PT_Image_get_height,
+    getWidth: PT_Image_get_width
+  },
+  Pixel: Pixel
+}

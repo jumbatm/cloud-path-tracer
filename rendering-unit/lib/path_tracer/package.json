@@ -2,9 +2,9 @@
   "name": "cloud-path-tracer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node lib.js"
   },
   "repository": {
     "type": "git",
