@@ -1,0 +1,4 @@
+[submodule "libpath_tracer/path_tracer"]
+	path = libpath_tracer/path_tracer
+	url = https://www.github.com/jumbatm/path_tracer.git
+	branch = c_bindings
