@@ -1,19 +1,24 @@
 var ref = require('ref')
-var StructType = requrie('ref-struct')
+var StructType = require('ref-struct')
 var ffi = require('ffi')
 
 /**
  *  Wrap the library using ffi 
  */
 // typedefs
-var Scene, Vec3, Camera, Image, Pixel = ref.types.void // we don't know what the layout of these structs looks like
+var Scene = ref.types.void // we don't know what the layout of these structs looks like
+var Vec3 = ref.types.void
+var Camera = ref.types.void
+var Image = ref.types.void
+var Pixel = ref.types.void
+
 var Scene_ptr = ref.refType(Scene)
 var Vec3_ptr = ref.refType(Vec3)
 var Camera_ptr = ref.refType(Camera)
 var Image_ptr = ref.refType(Image)
 var Pixel_ptr = ref.refType(Pixel)
 
-var libm = ffi.Library('libPT', {
+var libm = ffi.Library('path_tracer/target/debug/libpath_tracer_ffi', {
   "PT_Vec3_new": [Vec3_ptr, ['double', 'double', 'double']],
   "PT_Scene_from_json": [Camera_ptr, [Scene_ptr, Vec3_ptr, Vec3_ptr, Vec3_ptr, 'uint64', 'uint64']],
   "PT_Camera_render": [Image_ptr, [Camera_ptr, 'uint64', 'uint64', 'uint64', 'uint64', 'double', 'uint64', 'uint64']],
@@ -34,5 +39,5 @@ var Pixel = StructType({
   blue: ref.types.uint8
 })
 
-var temp = new Pixel({red = 45, green = 33, blue = 69})
+var temp = new Pixel({red: 45, green: 33, blue: 69})
 
