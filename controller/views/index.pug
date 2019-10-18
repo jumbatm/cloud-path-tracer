@@ -23,6 +23,6 @@ block content
     //script(type='text/javascript').
       $(".custom-file-input").on("change", function() {var fileName = $(this).val().split("\\").pop(); $(this).siblings(".custom-file-label").addClass("selected").html(fileName);});
 
-    form(method='post', enctype='multipart/form-data', action="https://youtu.be/dQw4w9WgXcQ")
-      input(class='text', type='file', name='file-select')
+    form(method='post', enctype='multipart/form-data', action="/post")
+      input(class='text', type='file', name='file-select', accept='.json')
       input(class='btn btn-primary btn-sm', type='submit', name='upload', value='Upload')
