@@ -28,7 +28,7 @@ var Pixel = StructType({
   blue: ref.types.uint8
 });
 
-var lib = ffi.Library('path_tracer/target/debug/libpath_tracer_ffi', {
+var lib = ffi.Library('path_tracer/target/release/libpath_tracer_ffi', {
   "PT_Vec3_new": [Vec3_ptr, ['double', 'double', 'double']],
   "PT_Vec3_delete": ['void', [Vec3_ptr]],
   "PT_SceneBuilder_new": [SceneBuilder_ptr, []],
