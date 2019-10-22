@@ -28,7 +28,7 @@ async function testCache(file){
   // Connect to the Azure Cache for Redis over the SSL port using the key.
   var cacheConnection = redis.createClient(6380, process.env.REDISCACHEHOSTNAME,{auth_pass: process.env.REDISCACHEKEY, tls: {servername: process.env.REDISCACHEHOSTNAME}});
   console.log(__dirname)
-  
+
   let filepath = path.join(__dirname, '..', 'uploads', file)
   fs.readFile(filepath,'utf8', async function(err, data) {
     if(err){
@@ -57,9 +57,15 @@ async function testCache(file){
 router.post('/', upload.any(), function(req, res, next) {
   console.log("filename is: " + req.files[0].filename)
 
-  testCache(req.files[0].filename);
+  try{
+    testCache(req.files[0].filename);
+  }
+  catch(error){
+    console.error(error);
+    res.render('upload-fail', {title: 'Online Path Tracer', error_code: error})
+  }
   uniqueID = String(req.files[0].filename).split("+", 1)
-  res.render('post', { title: 'Data has been uploaded', uuid: uniqueID });
+  res.render('post', { title: 'Online Path Tracer', uuid: uniqueID });
 });
 
 module.exports = router;
