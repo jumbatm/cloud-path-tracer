@@ -1,3 +1,4 @@
+const path = require('path');
 var ref = require('ref')
 var StructType = require('ref-struct')
 var ffi = require('ffi')
@@ -32,7 +33,7 @@ var Pixel = StructType({
 /**
  * Define the symbols and signatures to load.
  */
-var lib = ffi.Library('path_tracer/target/release/libpath_tracer_ffi', {
+var lib = ffi.Library(path.join(__dirname, 'path_tracer', 'target', 'release', 'libpath_tracer_ffi'), {
   "PT_Vec3_new": [Vec3_ptr, ['double', 'double', 'double']],
   "PT_Vec3_delete": ['void', [Vec3_ptr]],
   "PT_SceneBuilder_new": [SceneBuilder_ptr, []],
