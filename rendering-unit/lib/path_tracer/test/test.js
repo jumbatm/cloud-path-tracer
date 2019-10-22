@@ -58,9 +58,17 @@ const TEST = {
         },
       ],
     });
+
     let s = PT.JSON.checkValid(desc);
     let camera = PT.JSON.parseValid(s);
-    PT.Image.delete(camera);
+
+    let image = PT.Camera.render(camera, 0, 0, 0, 0, 200, 100, 90.0, 1, 1);
+
+    assert(PT.Image.getWidth(image) == 200);
+    assert(PT.Image.getHeight(image) == 100);
+
+    PT.Camera.delete(camera);
+    PT.Image.delete(image);
   },
   test_invalid_scene_description_empty: () => {
     let desc = "";
