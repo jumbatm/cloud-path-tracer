@@ -31,8 +31,10 @@ function testCache(file) {
     cacheConnection.on('error', function(err){
       console.log("Connection error.")
       reject(err);
-    });
-
+      cacheConnection.quit()
+      return
+    })
+    
     let filepath = path.join(__dirname, '..', 'uploads', file)
     fs.readFile(filepath,'utf8', async function(err, data) {
       if(err){
@@ -63,9 +65,9 @@ router.post('/', upload.any(), function(req, res, next) {
   console.log("filename is: " + req.files[0].filename)
 
   testCache(req.files[0].filename).catch(error => {
-    console.log("HERE")
     console.error(error);
     res.render('upload-fail', {title: 'Online Path Tracer', error_code: error})
+    console.log("res.render complete")
   }).finally(() => {
     uniqueID = String(req.files[0].filename).split("+", 1)
     res.render('post', { title: 'Online Path Tracer', uuid: uniqueID });
