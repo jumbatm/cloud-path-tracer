@@ -41,12 +41,6 @@ function testCache(file) {
 
       try {
         content = data;
-        /*
-      if(err){
-        throw err;
-      }
-      content = data;
-      */
 
         console.log("\nCache command: SET Message");
         console.log("Cache respone: " +  await cacheConnection.setAsync(file, content));
@@ -56,15 +50,15 @@ function testCache(file) {
 
         console.log("\nDeleting temp upload from server...")
 
-        fs.unlink(filepath, (err) => {
-          if(err) {
-            reject(err);
-          }
-          console.log("Temporary upload deleted")
-        })
       } catch(e) {
         reject(e);
       }
+      fs.unlink(filepath, (err) => {
+        if(err){
+          reject(err);
+        }
+        console.log("Temporary upload deleted")
+      })
     })
   });
 }
@@ -81,7 +75,7 @@ router.post('/', upload.any(), function(req, res, next) {
       res.render('post', { title: 'Online Path Tracer', uuid: uniqueID });
     }).catch(error => {
       console.log(error)
-      res.render('upload-fail', {title: 'Online Path Tracer', error_code: error})
+      res.render('upload-fail', {title: 'Online Path Tracer', error_msg: error, error_code: JSON.stringify(error)})
       console.log("res.render complete")
     });
 });
