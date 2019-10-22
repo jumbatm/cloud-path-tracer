@@ -1,3 +1,4 @@
+"use strict";
 var express = require('express');
 var multer = require('multer');
 var path = require('path');
@@ -32,46 +33,57 @@ function testCache(file) {
       console.log("Connection error.")
       reject(err);
       cacheConnection.quit()
-      return
-    })
-    
-    let filepath = path.join(__dirname, '..', 'uploads', file)
+    });
+
+    let filepath = path.join(__dirname, '..', 'uploads', file);
+
     fs.readFile(filepath,'utf8', async function(err, data) {
+
+      try {
+        content = data;
+        /*
       if(err){
         throw err;
       }
       content = data;
+      */
 
-      console.log("\nCache command: SET Message");
-      console.log("Cache respone: " +  await cacheConnection.setAsync(file, content));
+        console.log("\nCache command: SET Message");
+        console.log("Cache respone: " +  await cacheConnection.setAsync(file, content));
 
-      console.log("\nCache command: GET Message");
-      console.log("Cache response : " +  await cacheConnection.getAsync(file));
+        console.log("\nCache command: GET Message");
+        console.log("Cache response : " +  await cacheConnection.getAsync(file));
 
-      console.log("\nDeleting temp upload from server...")
+        console.log("\nDeleting temp upload from server...")
 
-      fs.unlink(filepath, (err) => {
-        if(err) {
-          throw err;
-        }
-        console.log("Temporary upload deleted")
-      })
+        fs.unlink(filepath, (err) => {
+          if(err) {
+            reject(err);
+          }
+          console.log("Temporary upload deleted")
+        })
+      } catch(e) {
+        reject(e);
+      }
     })
   });
 }
+
+
 
 /* GET users listing. */
 router.post('/', upload.any(), function(req, res, next) {
   console.log("filename is: " + req.files[0].filename)
 
-  testCache(req.files[0].filename).catch(error => {
-    console.error(error);
-    res.render('upload-fail', {title: 'Online Path Tracer', error_code: error})
-    console.log("res.render complete")
-  }).finally(() => {
-    uniqueID = String(req.files[0].filename).split("+", 1)
-    res.render('post', { title: 'Online Path Tracer', uuid: uniqueID });
-  });
+  testCache(req.files[0].filename)
+    .then(() => {
+      uniqueID = String(req.files[0].filename).split("+", 1)
+      res.render('post', { title: 'Online Path Tracer', uuid: uniqueID });
+    }).catch(error => {
+      console.log(error)
+      res.render('upload-fail', {title: 'Online Path Tracer', error_code: error})
+      console.log("res.render complete")
+    });
 });
 
 module.exports = router;
