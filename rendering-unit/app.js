@@ -43,13 +43,17 @@ app.post('/', (req, res, next) => {
     return;
   }
   let valid = PT.JSON.checkValid(scene_information);
-  console.log(scene_information);
   if (!valid.success) {
     console.log(valid.reason);
     res.status(400).send("Bad scene information");
     return;
   }
+
   let camera = PT.JSON.parseValid(valid);
+  
+  console.log("Rendering:");
+  PT.Camera.dump(camera);
+
   let image = PT.Camera.render(camera, 0, 0, 0, 0, render_options.width, render_options.height, render_options.fov, render_options.bounces, render_options.samples_per_pixel);
 
   console.log("Done!");
@@ -60,18 +64,19 @@ app.post('/', (req, res, next) => {
   // Build an image buffer.
   const image_width = PT.Image.getWidth(image);
   const image_height = PT.Image.getHeight(image);
+
+  console.log("Starting conversion to buffer");
   for (let i = 0; i < image_width; ++i) {
     for (let j = 0; j < image_height; ++j) {
       let pixel = PT.Image.getPixel(image, i, j);
-      console.log(pixel);
       bufferData.push(pixel.red);
       bufferData.push(pixel.green);
       bufferData.push(pixel.blue);
-      console.log(`Finished ${i * image_height + j} of ${image_width * image_height}`);
     }
   }
   let buffer = Buffer.from(bufferData);
-res.status(200).send(buffer.toString('base64'));
+  console.log("Converting to base64");
+  res.status(200).send(buffer.toString('base64'));
 
   PT.Camera.delete(camera);
   camera = null;
