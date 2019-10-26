@@ -97,8 +97,8 @@ app.post('/', (req, res) => {
 
       let camera = PT.JSON.parseValid(valid);
 
-      console.log("Rendering:");
-      PT.Camera.dump(camera);
+        console.log("Rendering:");
+        //PT.Camera.dump(camera);
 
       let image = PT.Camera.render(camera, 
         region.top_left[0], region.top_left[1], 
