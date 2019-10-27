@@ -110,11 +110,16 @@ router.post('/', upload.any(), function(req, res, next) {
       const TILE_WIDTH = Math.ceil((WIDTH * TILE_HEIGHT) / HEIGHT);
 
       let promises = [];
+
+      let metadata = [];
+
       for (let top_left_x = 0; top_left_x < WIDTH; top_left_x += TILE_WIDTH) {
         for (let top_left_y = 0; top_left_y < HEIGHT; top_left_y += TILE_HEIGHT) {
 
           let tile_width = Math.min(TILE_WIDTH, WIDTH - top_left_x);
           let tile_height = Math.min(TILE_HEIGHT, HEIGHT - top_left_y);
+
+          const tileKey = `${uniqueID}-region-${top_left_x}-${top_left_y}`;
 
           console.log(`Adding tile for ${WIDTH}x${HEIGHT} image at (${top_left_x}, ${top_left_y}), of size ${tile_width}x${tile_height}`);
           promises.push(axios.post(process.env.RUIP, {
@@ -123,11 +128,19 @@ router.post('/', upload.any(), function(req, res, next) {
             cacheKey: process.env.REDISCACHEKEY,
             uuid: uniqueID,
             cachePort: process.env.CACHEPORT,
+            outputFormat: tileKey,
             region: { top_left: [top_left_x, top_left_y], height: tile_height, width: tile_width } 
           }));
+
+          metadata.push({ key: tileKey, top_left: [top_left_x, top_left_y], width: tile_width, height: tile_height});
         }
       } 
-      Promise.all(promises).catch(err => {
+      Promise.all(promises)
+        .then(success => {
+          // We only place the metadata _after_ all tiles are up. This way, we never end up with invalid metadata.
+          return new AWS.S3().putObject({ Bucket: process.env.AWSBUCKETNAME, Key: uniqueID + "-metadata", Body: JSON.stringify(metadata)}).promise();
+        })
+        .catch(err => {
         console.log("Render failed with err " + err);
         console.log(err.stack);
         // Render failed.
