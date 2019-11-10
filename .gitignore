@@ -65,3 +65,6 @@ controller/uploads
 
 # The rendering unit
 rendering-unit/out.png
+
+# dist folders.
+**/bin/dist
